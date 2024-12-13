@@ -1,0 +1,94 @@
+.game-container {
+    width: 600px;
+    height: 200px;
+    border-bottom: 1px solid #000;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+#dino {
+    width: 44px;
+    height: 47px;
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    background: url('images/Dinosaur.png') no-repeat;
+    background-size: contain;
+}
+
+#cactus {
+    width: 17px;
+    height: 35px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: url('images/cactus-1.png') no-repeat;
+    background-size: contain;
+}
+
+#score {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hidden {
+    display: none;
+}
+
+#speed {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.cactus-1 {
+    width: 20px;
+    height: 35px;
+    background: url('images/cactus-1.png') no-repeat;
+}
+
+.cactus-2 {
+    width: 40px;
+    height: 35px;
+    background: url('images/cactus-2.png') no-repeat;
+}
+
+#cactus {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-size: contain;
+}
+
+#bird {
+    width: 46px;
+    height: 32px;
+    position: absolute;
+    right: 0;
+    bottom: 80px;
+    display: none;
+    background-size: contain;
+}
+
+.bird-frame1 {
+    background: url('images/bird-1.png') no-repeat;
+    background-size: contain;
+}
+
+.bird-frame2 {
+    background: url('images/bird-2.png') no-repeat;
+    background-size: contain;
+} 

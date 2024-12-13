@@ -1,0 +1,1 @@
+讓鳥在飛行的時候有翅膀擺動的效果，所以原本的 bird.png 改為 bird-1.png 與 bird-2.png 

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>自动播放电子相框</title>
+    <style>
+        .photo-frame {
+            width: 800px;
+            height: 600px;
+            margin: 50px auto;
+            border: 20px solid #8B4513;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative; /* 添加相对定位 */
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            transition: transform 0.3s ease; /* 添加过渡效果 */
+        }
+
+        .photo-frame img.active {
+            display: block;
+        }
+
+        /* 添加左右按钮样式 */
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            border: none;
+            z-index: 100;
+        }
+
+        .prev {
+            left: 0;
+        }
+
+        .next {
+            right: 0;
+        }
+
+        .controls {
+            width: 800px;
+            margin: 20px auto;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .controls label {
+            font-size: 16px;
+        }
+
+        .controls input {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="photo-frame">
+        <button class="nav-button prev">←</button>
+        <button class="nav-button next">→</button>
+        <img src="https://picsum.photos/800/600?random=1" class="active">
+        <img src="https://picsum.photos/800/600?random=2">
+        <img src="https://picsum.photos/800/600?random=3">
+    </div>
+
+    <div class="controls">
+        <input type="file" id="folderInput" webkitdirectory directory multiple>
+        <label>播放間隔：</label>
+        <input type="range" id="speedControl" min="1000" max="10000" step="500" value="3000">
+        <span id="speedValue">3秒</span>
+    </div>
+
+    <script>
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+        let currentIndex = 0;
+        let timer;
+
+        function showNextImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        function showPrevImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        // 添加触摸滑动功能
+        let touchStartX = 0;
+        const photoFrame = document.querySelector('.photo-frame');
+
+        photoFrame.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            clearInterval(timer); // 触摸时暂停自动播放
+        });
+
+        photoFrame.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchEndX - touchStartX;
+
+            if (Math.abs(diff) > 50) { // 滑动距离大于50px时触发
+                if (diff > 0) {
+                    showPrevImage();
+                } else {
+                    showNextImage();
+                }
+            }
+            
+            // 恢复自动播放
+            timer = setInterval(showNextImage, 3000);
+        });
+
+        // 点击按钮切换图片
+        prevBtn.addEventListener('click', () => {
+            clearInterval(timer);
+            showPrevImage();
+            timer = setInterval(showNextImage, 3000);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            clearInterval(timer);
+            showNextImage();
+            timer = setInterval(showNextImage, 3000);
+        });
+
+        const speedControl = document.getElementById('speedControl');
+        const speedValue = document.getElementById('speedValue');
+        let interval = 3000; // 預設間隔時間
+
+        // 更新播放速度的函數
+        function updateSpeed() {
+            interval = parseInt(speedControl.value);
+            speedValue.textContent = (interval / 1000) + '秒';
+            clearInterval(timer);
+            timer = setInterval(showNextImage, interval);
+        }
+
+        // 監聽滑動條變化
+        speedControl.addEventListener('input', updateSpeed);
+
+        const folderInput = document.getElementById('folderInput');
+        let images = [];
+        
+        folderInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files).filter(file => 
+                file.type.startsWith('image/')
+            );
+            
+            // 清除现有图片
+            photoFrame.querySelectorAll('img').forEach(img => img.remove());
+            
+            // 添加新图片
+            files.forEach((file, index) => {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = index === 0 ? 'active' : '';
+                photoFrame.insertBefore(img, photoFrame.lastElementChild.nextSibling);
+            });
+            
+            // 更新图片集合和索引
+            images = photoFrame.querySelectorAll('img');
+            currentIndex = 0;
+            
+            // 重置定时器
+            clearInterval(timer);
+            timer = setInterval(showNextImage, interval);
+        });
+
+        // 修改初始化自動播放，使用 interval 變量
+        timer = setInterval(showNextImage, interval);
+    </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>計算機</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .calculator-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .calculator {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .display {
+            width: 100%;
+            height: 60px;
+            margin-bottom: 20px;
+            background-color: #f8f8f8;
+            border: none;
+            border-radius: 5px;
+            font-size: 24px;
+            text-align: right;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* 數字按鈕 - 藍色 */
+        .number {
+            background-color: #e6f3ff;
+            color: #0066cc;
+        }
+
+        /* 運算符號 - 綠色 */
+        .operator {
+            background-color: #e6ffe6;
+            color: #006600;
+        }
+
+        /* 其他按鈕 - 灰色 */
+        .other {
+            background-color: #f2f2f2;
+            color: #333333;
+        }
+
+        .history {
+            width: 200px;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .history-item {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator">
+            <input type="text" class="display" id="display" readonly>
+            <div class="buttons">
+                <button class="other" onclick="clearDisplay()">C</button>
+                <button class="other" onclick="backspace()">←</button>
+                <button class="operator" onclick="appendToDisplay('(')">(</button>
+                <button class="operator" onclick="appendToDisplay(')')">)</button>
+                
+                <button class="number" onclick="appendToDisplay('7')">7</button>
+                <button class="number" onclick="appendToDisplay('8')">8</button>
+                <button class="number" onclick="appendToDisplay('9')">9</button>
+                <button class="operator" onclick="appendToDisplay('/')">/</button>
+                
+                <button class="number" onclick="appendToDisplay('4')">4</button>
+                <button class="number" onclick="appendToDisplay('5')">5</button>
+                <button class="number" onclick="appendToDisplay('6')">6</button>
+                <button class="operator" onclick="appendToDisplay('*')">×</button>
+                
+                <button class="number" onclick="appendToDisplay('1')">1</button>
+                <button class="number" onclick="appendToDisplay('2')">2</button>
+                <button class="number" onclick="appendToDisplay('3')">3</button>
+                <button class="operator" onclick="appendToDisplay('-')">-</button>
+                
+                <button class="number" onclick="appendToDisplay('0')">0</button>
+                <button class="number" onclick="appendToDisplay('.')">.</button>
+                <button class="other" onclick="calculate()">=</button>
+                <button class="operator" onclick="appendToDisplay('+')">+</button>
+            </div>
+        </div>
+        <div class="history">
+            <h3>計算歷史</h3>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const historyList = document.getElementById('history-list');
+        const history = [];
+
+        // 監聽鍵盤事件
+        document.addEventListener('keydown', handleKeyPress);
+
+        function handleKeyPress(e) {
+            const key = e.key;
+            if (/[\d\+\-\*\/\(\)\.]/.test(key)) {
+                e.preventDefault();
+                appendToDisplay(key);
+            } else if (key === 'Enter') {
+                e.preventDefault();
+                calculate();
+            } else if (key === 'Backspace') {
+                e.preventDefault();
+                backspace();
+            } else if (key === 'Escape') {
+                e.preventDefault();
+                clearDisplay();
+            }
+        }
+
+        function appendToDisplay(value) {
+            display.value += value;
+        }
+
+        function clearDisplay() {
+            display.value = '';
+        }
+
+        function backspace() {
+            display.value = display.value.slice(0, -1);
+        }
+
+        function calculate() {
+            try {
+                const expression = display.value;
+                const result = eval(display.value);
+                
+                // 添加到歷史記錄
+                addToHistory(`${expression} = ${result}`);
+                
+                display.value = result;
+            } catch (error) {
+                display.value = '錯誤';
+            }
+        }
+
+        function addToHistory(item) {
+            history.unshift(item);
+            if (history.length > 100) {
+                history.pop();
+            }
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            historyList.innerHTML = history
+                .map(item => `<div class="history-item" onclick="loadFromHistory('${item}')">${item}</div>`)
+                .join('');
+        }
+
+        function loadFromHistory(item) {
+            // 從歷史記錄中提取運算式（去除結果部分）
+            const expression = item.split('=')[0].trim();
+            display.value = expression;
+        }
+    </script>
+</body>
+</html>

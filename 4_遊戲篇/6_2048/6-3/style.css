@@ -1,0 +1,86 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.grid-container {
+    background-color: #bbada0;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 20px auto;
+    position: relative;
+    display: inline-block;
+}
+
+.grid-row {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.grid-row:last-child {
+    margin-bottom: 0;
+}
+
+.grid-cell {
+    width: 80px;
+    height: 80px;
+    margin-right: 15px;
+    background-color: #cdc1b4;
+    border-radius: 3px;
+}
+
+.size-3 .grid-cell, .size-3 .tile { width: 100px; height: 100px; }
+.size-4 .grid-cell, .size-4 .tile { width: 80px; height: 80px; }
+.size-5 .grid-cell, .size-5 .tile { width: 65px; height: 65px; }
+.size-6 .grid-cell, .size-6 .tile { width: 55px; height: 55px; }
+.size-8 .grid-cell, .size-8 .tile { width: 45px; height: 45px; }
+
+.tile {
+    position: absolute;
+    background-color: #eee4da;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    transition: all 0.15s ease-in-out;
+    animation: appear 0.2s;
+}
+
+.size-3 .tile { font-size: 36px; }
+.size-4 .tile { font-size: 28px; }
+.size-5 .tile { font-size: 24px; }
+.size-6 .tile { font-size: 20px; }
+.size-8 .tile { font-size: 16px; }
+
+@keyframes appear {
+    0% { opacity: 0; transform: scale(0); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.tile-2 { background-color: #eee4da; }
+.tile-4 { background-color: #ede0c8; }
+.tile-8 { background-color: #f2b179; color: white; }
+.tile-16 { background-color: #f59563; color: white; }
+.tile-32 { background-color: #f67c5f; color: white; }
+.tile-64 { background-color: #f65e3b; color: white; }
+.tile-128 { background-color: #edcf72; color: white; }
+.tile-256 { background-color: #edcc61; color: white; }
+.tile-512 { background-color: #edc850; color: white; }
+.tile-1024 { background-color: #edc53f; color: white; }
+.tile-2048 { background-color: #edc22e; color: white; }
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}

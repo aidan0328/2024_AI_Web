@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>2048遊戲</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>2048</h1>
+        <div class="controls">
+            <div class="score-container">
+                分數：<span id="score">0</span>
+            </div>
+            <div class="size-control">
+                網格大小：
+                <select id="gridSize" onchange="changeGridSize()">
+                    <option value="3">3x3</option>
+                    <option value="4" selected>4x4</option>
+                    <option value="5">5x5</option>
+                    <option value="6">6x6</option>
+                    <option value="8">8x8</option>
+                </select>
+            </div>
+            <button onclick="newGame()">新遊戲</button>
+        </div>
+        <div class="grid-container" id="grid-container">
+            <!-- 網格將由 JavaScript 動態生成 -->
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

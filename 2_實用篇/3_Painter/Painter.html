@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>網頁小畫家</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .controls {
+            margin: 20px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: crosshair;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .resize-handle {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            cursor: se-resize;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label for="colorPicker">顏色：</label>
+        <input type="color" id="colorPicker">
+        
+        <label for="brushSize">筆刷大小：</label>
+        <input type="range" id="brushSize" min="1" max="50" value="5">
+        
+        <button id="clearBtn">清除畫布</button>
+        <button id="saveBtn">儲存圖片</button>
+        <button id="eraserBtn">橡皮擦</button>
+        <input type="file" id="imageLoader" accept="image/*" style="display: none;">
+        <button id="loadImageBtn">載入圖片</button>
+    </div>
+    
+    <div class="canvas-container">
+        <canvas id="canvas" width="800" height="600"></canvas>
+        <div class="resize-handle"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const brushSize = document.getElementById('brushSize');
+        const clearBtn = document.getElementById('clearBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const eraserBtn = document.getElementById('eraserBtn');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let isEraser = false;
+        const canvasContainer = document.querySelector('.canvas-container');
+        const resizeHandle = document.querySelector('.resize-handle');
+        let isResizing = false;
+        const loadImageBtn = document.getElementById('loadImageBtn');
+        const imageLoader = document.getElementById('imageLoader');
+
+        // 設定初始畫布背景為白色
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 繪圖相關函數
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            
+            if (isEraser) {
+                ctx.strokeStyle = 'white';
+                ctx.globalCompositeOperation = 'destination-out';
+            } else {
+                ctx.strokeStyle = colorPicker.value;
+                ctx.globalCompositeOperation = 'source-over';
+            }
+            
+            ctx.lineWidth = brushSize.value;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        // 事件監聽器
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        });
+
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
+
+        // 清除畫布
+        clearBtn.addEventListener('click', () => {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // 儲存圖片
+        saveBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = '我的畫作.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+
+        // 添加橡皮擦切換功能
+        eraserBtn.addEventListener('click', () => {
+            isEraser = !isEraser;
+            eraserBtn.textContent = isEraser ? '畫筆' : '橡皮擦';
+        });
+
+        // 保存畫布內容的函數
+        function saveCanvasContent() {
+            return canvas.toDataURL();
+        }
+
+        // 恢復畫布內容的函數
+        function restoreCanvasContent(dataURL) {
+            const img = new Image();
+            img.src = dataURL;
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0);
+            };
+        }
+
+        // 添加調整大小的事件監聽器
+        resizeHandle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            
+            const canvasRect = canvas.getBoundingClientRect();
+            const savedContent = saveCanvasContent();
+            
+            const newWidth = e.clientX - canvasRect.left;
+            const newHeight = e.clientY - canvasRect.top;
+            
+            // 設定最小尺寸
+            canvas.width = Math.max(200, newWidth);
+            canvas.height = Math.max(200, newHeight);
+            
+            // 重新設定白色背景
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 恢復之前的內容
+            restoreCanvasContent(savedContent);
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+        });
+
+        // 添加載入圖片的功能
+        loadImageBtn.addEventListener('click', () => {
+            imageLoader.click();
+        });
+
+        imageLoader.addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // 保存當前的畫布尺寸
+                    const currentWidth = canvas.width;
+                    const currentHeight = canvas.height;
+                    
+                    // 計算適合的圖片尺寸
+                    let newWidth = img.width;
+                    let newHeight = img.height;
+                    
+                    // 如果圖片大於當前畫布，進行等比例縮放
+                    if (newWidth > currentWidth || newHeight > currentHeight) {
+                        const ratio = Math.min(currentWidth / newWidth, currentHeight / newHeight);
+                        newWidth *= ratio;
+                        newHeight *= ratio;
+                    }
+                    
+                    // 在畫布中央繪製圖片
+                    const x = (currentWidth - newWidth) / 2;
+                    const y = (currentHeight - newHeight) / 2;
+                    
+                    // 清除畫布並重新設定白色背景
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // 繪製圖片
+                    ctx.drawImage(img, x, y, newWidth, newHeight);
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>網頁應用集</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: clamp(24px, 5vw, 36px);
+            width: 100%;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            padding: clamp(15px, 3vw, 20px);
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .app-icon {
+            font-size: clamp(36px, 8vw, 48px);
+            margin-bottom: 15px;
+        }
+
+        .app-title {
+            font-size: clamp(18px, 4vw, 24px);
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .app-description {
+            color: #666;
+            font-size: clamp(14px, 3vw, 16px);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .app-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .app-card {
+                padding: 15px;
+                min-height: 180px;
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 900px) {
+            .app-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>網頁應用集</h1>
+    
+    <div class="app-grid">
+        <a href="Calculator.html" class="app-card">
+            <div class="app-icon">🧮</div>
+            <div class="app-title">計算機</div>
+            <div class="app-description">功能完整的網頁計算機，支援基本運算和計算歷史記錄</div>
+        </a>
+
+        <a href="Painter.html" class="app-card">
+            <div class="app-icon">🎨</div>
+            <div class="app-title">網頁小畫家</div>
+            <div class="app-description">簡易的繪圖工具，可以自由創作和儲存作品</div>
+        </a>
+
+        <a href="PhotoFrame.html" class="app-card">
+            <div class="app-icon">🖼️</div>
+            <div class="app-title">電子相框</div>
+            <div class="app-description">自動播放的電子相框，可以展示你喜愛的照片</div>
+        </a>
+
+        <a href="QR_Code.html" class="app-card">
+            <div class="app-icon">📱</div>
+            <div class="app-title">QR Code 生成器</div>
+            <div class="app-description">快速生成可自訂大小的 QR Code</div>
+        </a>
+    </div>
+</body>
+</html> 

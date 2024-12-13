@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>QR Code 生成器</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode.js@1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        input {
+            width: 300px;
+            padding: 8px;
+            margin: 10px 0;
+        }
+        #qrcode {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code 生成器</h1>
+    <input type="text" id="url" value="https://www.google.com" placeholder="請輸入網址">
+    <button onclick="generateQR()">生成 QR Code</button>
+    <div id="qrcode"></div>
+
+    <script>
+        function generateQR() {
+            const url = document.getElementById('url').value;
+            document.getElementById('qrcode').innerHTML = '';
+            
+            QRCode.toCanvas(document.getElementById('qrcode'), url, function (error) {
+                if (error) console.error(error);
+            });
+        }
+
+        // 頁面載入時生成預設的 QR Code
+        window.onload = generateQR;
+    </script>
+</body>
+</html>

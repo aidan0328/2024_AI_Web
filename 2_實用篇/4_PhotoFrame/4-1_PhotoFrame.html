@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>自动播放电子相框</title>
+    <style>
+        .photo-frame {
+            width: 800px;
+            height: 600px;
+            margin: 50px auto;
+            border: 20px solid #8B4513;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .photo-frame img.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="photo-frame">
+        <img src="https://picsum.photos/800/600?random=1" class="active">
+        <img src="https://picsum.photos/800/600?random=2">
+        <img src="https://picsum.photos/800/600?random=3">
+    </div>
+
+    <script>
+        const images = document.querySelectorAll('.photo-frame img');
+        let currentIndex = 0;
+
+        function showNextImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        setInterval(showNextImage, 3000); // 每3秒切换一次图片
+    </script>
+</body>
+</html>

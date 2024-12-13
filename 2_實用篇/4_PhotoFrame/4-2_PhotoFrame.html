@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>自动播放电子相框</title>
+    <style>
+        .photo-frame {
+            width: 800px;
+            height: 600px;
+            margin: 50px auto;
+            border: 20px solid #8B4513;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative; /* 添加相对定位 */
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            transition: transform 0.3s ease; /* 添加过渡效果 */
+        }
+
+        .photo-frame img.active {
+            display: block;
+        }
+
+        /* 添加左右按钮样式 */
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            border: none;
+            z-index: 100;
+        }
+
+        .prev {
+            left: 0;
+        }
+
+        .next {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="photo-frame">
+        <button class="nav-button prev">←</button>
+        <button class="nav-button next">→</button>
+        <img src="https://picsum.photos/800/600?random=1" class="active">
+        <img src="https://picsum.photos/800/600?random=2">
+        <img src="https://picsum.photos/800/600?random=3">
+    </div>
+
+    <script>
+        const images = document.querySelectorAll('.photo-frame img');
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+        let currentIndex = 0;
+        let timer;
+
+        function showNextImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        function showPrevImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        // 添加触摸滑动功能
+        let touchStartX = 0;
+        const photoFrame = document.querySelector('.photo-frame');
+
+        photoFrame.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            clearInterval(timer); // 触摸时暂停自动播放
+        });
+
+        photoFrame.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchEndX - touchStartX;
+
+            if (Math.abs(diff) > 50) { // 滑动距离大于50px时触发
+                if (diff > 0) {
+                    showPrevImage();
+                } else {
+                    showNextImage();
+                }
+            }
+            
+            // 恢复自动播放
+            timer = setInterval(showNextImage, 3000);
+        });
+
+        // 点击按钮切换图片
+        prevBtn.addEventListener('click', () => {
+            clearInterval(timer);
+            showPrevImage();
+            timer = setInterval(showNextImage, 3000);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            clearInterval(timer);
+            showNextImage();
+            timer = setInterval(showNextImage, 3000);
+        });
+
+        // 初始化自动播放
+        timer = setInterval(showNextImage, 3000);
+    </script>
+</body>
+</html>
